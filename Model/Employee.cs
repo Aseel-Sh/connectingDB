@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace connectingDB.Model
 {
-    internal class Employee
+    public class Employee
     {
         public long Id { get; set; }
         public string Name { get; set; }

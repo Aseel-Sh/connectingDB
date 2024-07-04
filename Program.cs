@@ -2,8 +2,10 @@
 using connectingDB.Model;
 using System;
 using System.Xml;
+using connectingDB.Repo;
 public class Program
 {
+    public static EmployeeRepo Repo = new EmployeeRepo("data source=.;Initial Catalog=CompanyDb;Integrated Security=True;TrustServerCertificate=True");
     public static void Main(string[] args)
     {
         List<Employee> employees = new List<Employee>();
@@ -13,10 +15,9 @@ public class Program
             Console.WriteLine($"Id = {employee.Id} , Name = {employee.Name} , Salary = {employee.Salary} , Status = {employee.Status}");
         }
 
-        int x;
-        Console.WriteLine("-------------------------------------------------");
-        Console.WriteLine("1. Add\n2. Delete\n3. Edit\n4. Print DB\n5. Exit");
-        Console.WriteLine("-------------------------------------------------");
+        int x = 0;
+        printMenu(x);
+
         do
         {
              x = Convert.ToInt32(Console.ReadLine());
@@ -64,17 +65,15 @@ public class Program
 
     private static void EditEmployee(List<Employee> employees)
     {
-        long id;
-        string name, status;
-        decimal salary;
         bool foundEmployee = false;
+        Employee emp = new Employee();
 
         Console.Write("Id of employee you want to edit: ");
-        id = Convert.ToInt64(Console.ReadLine());
+        emp.Id = Convert.ToInt64(Console.ReadLine());
 
         foreach (Employee employee in employees)
         {
-            if (employee.Id == id)
+            if (employee.Id == emp.Id)
             {
                 foundEmployee = true;
                 break;
@@ -87,21 +86,16 @@ public class Program
         }
         else
         {
-            Console.WriteLine("New Name: ");
-            name = Console.ReadLine();
+            Console.Write("New Name: ");
+            emp.Name = Console.ReadLine();
 
             Console.Write("New Salary: ");
-            salary = Convert.ToDecimal(Console.ReadLine());
+            emp.Salary = Convert.ToDecimal(Console.ReadLine());
 
             Console.Write("New Status: ");
-            status = Console.ReadLine();
+            emp.Status = Console.ReadLine();
 
-            string connectionString = "data source=.;Initial Catalog=CompanyDb;Integrated Security=True;TrustServerCertificate=True";
-            SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand("UPDATE Employees SET Name = '" + name +"', Salary = " + salary +", Status = '" + status +"' WHERE Id = " + id, connection);
-            connection.Open();
-            command.ExecuteNonQuery();
-            connection.Close();
+            Repo.EditEmployee(emp);
 
             Console.WriteLine("Employee edited.");
 
@@ -132,36 +126,25 @@ public class Program
         }
         else
         {
-            string connectionString = "data source=.;Initial Catalog=CompanyDb;Integrated Security=True;TrustServerCertificate=True";
-            SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand("DELETE FROM Employees WHERE ID = " + id, connection);
-            connection.Open();
-            command.ExecuteNonQuery();
-            connection.Close();
-
+            Repo.DeleteEmployee(id);
             Console.WriteLine("Employee deleted.");
         }
     }
 
     private static void AddEmployee()
     {
-        string name, status;
-        decimal salary;
+        Employee emp = new Employee();
+
         Console.Write("Name of employee you want to add: ");
-        name = Console.ReadLine();
+        emp.Name = Console.ReadLine();
 
         Console.Write("Salary of employee: ");
-        salary = Convert.ToDecimal(Console.ReadLine());
+        emp.Salary = Convert.ToDecimal(Console.ReadLine());
 
         Console.Write("Status of employee: ");
-        status = Console.ReadLine();
+        emp.Status = Console.ReadLine();
 
-        string connectionString = "data source=.;Initial Catalog=CompanyDb;Integrated Security=True;TrustServerCertificate=True";
-        SqlConnection connection = new SqlConnection(connectionString);
-        SqlCommand command = new SqlCommand("INSERT INTO Employees (Name, Salary, Status) VALUES ('" + name + "', " + salary +", '" + status + "')", connection);
-        connection.Open();
-        command.ExecuteNonQuery();
-        connection.Close();
+        Repo.AddEmployee(emp);
 
         Console.WriteLine("Employee Added.");
 
