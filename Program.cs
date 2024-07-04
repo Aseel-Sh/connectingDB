@@ -116,17 +116,17 @@ public class Program
         Console.Write("ID of employee you want to delete: ");
         long id = Convert.ToInt64(Console.ReadLine());
 
-        Employee employeeToDelete = null;
+        bool foundEmployee = false;
         foreach (var employee in employees)
         {
             if (employee.Id == id)
             {
-                employeeToDelete = employee;
+                foundEmployee = true;
                 break;
             }
         } 
 
-        if (employeeToDelete == null)
+        if (foundEmployee == false)
         {
             Console.WriteLine("No such employee in DB");
         }
